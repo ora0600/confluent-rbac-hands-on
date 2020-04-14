@@ -1,0 +1,68 @@
+# Add peter to the organization
+dn: cn=peter,ou=people,dc=planetexpress,dc=com
+changetype: add
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+description: peter is eagle projectowner.
+cn: peter
+sn: peter
+uid: peter
+userPassword: peter
+
+# Add peter to the organization
+dn: cn=carsten,ou=people,dc=planetexpress,dc=com
+changetype: add
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+description: carsten is teammember of the project eagle.
+cn: carsten
+sn: carsten
+uid: carsten
+userPassword: carsten
+
+# Add peter to the organization
+dn: cn=suvad,ou=people,dc=planetexpress,dc=com
+changetype: add
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+description: suvad is teammember of the project eagle.
+cn: suvad
+sn: suvad
+uid: suvad
+userPassword: suvad
+
+# Add group to the organization
+DN: cn=eagle_team,ou=people,dc=planetexpress,dc=com
+changetype: add
+objectClass: Group
+objectClass: top
+cn: eagle_team
+groupType: 2147483650
+member: cn=peter,ou=people,dc=planetexpress,dc=com
+member: cn=carsten,ou=people,dc=planetexpress,dc=com
+member: cn=suvad,ou=people,dc=planetexpress,dc=com
+
+# Add rbacadmin max to the organization
+dn: cn=max,ou=people,dc=planetexpress,dc=com
+changetype: add
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+description: max is rbacadmin.
+cn: max
+sn: max
+uid: max
+userPassword: max
+
+# Add max to the admin_staff group
+DN: cn=admin_staff,ou=people,dc=planetexpress,dc=com
+changetype: modify
+add: member
+member: cn=max,ou=people,dc=planetexpress,dc=com
