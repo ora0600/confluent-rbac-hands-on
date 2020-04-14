@@ -53,5 +53,3 @@ echo "    See status:"
 echo "          docker-compose -p $PROJECT ps" 
 echo "    To stop:" 
 echo "          docker-compose -p $PROJECT down" 
-
-
