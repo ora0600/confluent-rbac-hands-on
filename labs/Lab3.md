@@ -1,184 +1,97 @@
 # Lab 3. First Authorization check
-First show configs property files:
+We start now with a new use case.
+We have a project with a name "eagle" and there is a project team. In the project eagle team there are currently 3 members/users (peter, carsten, suvad).
+Project owner is peter; carsten and suvad are developers.
+
+Now RBAC admin (professor) wants to delegate project authorization responsibility to peter as the project owner of the project eagle.
+
+ * Login to control center as professor http://publicip:9021 ( http://localhost:9021 )
+
+ * Go to the right corner
+   ![manage assignements#1](images/pic1.png)
+ * and choose "Manage role assignements"
+   ![manage assignements#2](images/pic2.png)
+ * Go to Assignements
+   ![manage assignements#3](images/pic3.png)
+ * Choose your Kafka cluster, and click then on Topic
+   ![manage assignements#4](images/pic4.png)
+ * Click on "+ Add role assignement"
+
+   * Then select for 1. dropdown ("Principal Type") "User"
+   * as User select "peter" from the list,
+   * Role select "ResourceOwner",
+   * Pattern type is "Prefixed"
+   * Resource ID is "eagle_"
+   * and then click on "save".
+
+Now is peter able to create topics with prefix "eagle_" and peter is able to authorize people to access topics with prefix "eagle_". Cool! 
+
+Login to the Control Center as peter and 
+
+ * Create a topic with prefix eagle_ (Look during typing eagle, there is no possibility to create topic until the prefix is full)
+
+Now logout and login as carsten or suvad in the control center and check if you are able to see any topics. Should be not possible.
+
+Now login again as peter and choose "Manage role assignements"
+ * select assignements
+ * klick on kafka cluster
+ * go to the topic area
+ * Click on "+ Add role assignement"
+   * choose principal type Group
+   * choose group eagle_team
+   * choose Role "DeveloperWrite"
+   * Pattern type is "Prefixed"
+   * Resource ID is "eagle_"
+   * and then click on "save".
+
+Login again as carsten or suvad and check if you can see any topics. You should see topic "eagle_topic1"
+
+Run console producer to create some data in the topic "eagle_topic1" as user suvad (carsten)
+```bash
+kafka-console-producer --broker-list localhost:9094 --producer.config suvad.properties --topic eagle_topic1
+> Hallo
+> wie gehts
+> ?
+# to cancel
+CTRL+C
 ```
-cd confluent-rbac-hands-on-master/rbac-docker/client-configs/
-ls
-cat professor.properties
-cat bender.properties
-```
-Now, try to create a topic as user bender (should fail):
-```
-kafka-topics --bootstrap-server localhost:9094 --create --topic cmtest --partitions 1 --replication-factor 1 --command-config bender.properties
+
+Lets now try to consume data from eagle_topic1 as suvad. It should fail.
+```bash
+kafka-console-consumer --bootstrap-server localhost:9094 \
+--consumer.config suvad.properties --topic eagle_topic1 --from-beginning
 ```
 see error statement `[Authorization failed.]`
 
-Try now as professor, he is the SuperUser:
-```
-kafka-topics --bootstrap-server localhost:9094 --create --topic test1 --partitions 1 --replication-factor 1 --command-config professor.properties
-kafka-topics --bootstrap-server localhost:9094 --list --command-config professor.properties
-```
-Try all the URLs as short demo :
-  * go to control center as professor http://publicip:9021 or 
-  * logout try as Hermes, he is also SystemAdmin http://publicip :9021
-  * He did not see CONNECT, KSQL and has no access to Schema Registry (Topic View)
+Lets authorize peter to provide his eagle_team access to eagle_* topics.
+But at this point we will REST API to create RBAC role bindings (access policies):
 
-Try Schema Registry
-* as unauthoried user:
-```
-curl localhost:8081/subjects
-```
-* As Authroized User:
-```
-curl -u professor:professor localhost:8081/subjects
-# Showed empty Schema
-```
-* try as anonymous user (is not configured):
-```
-curl -u ANONYMOUS localhost:8081/subjects
-```
-* and finally try as user frey
-```
-curl -u fry:fry localhost:8081/subjects
-# Will show empty Schema
-```
-First move to the client configs
+1) We will need to authorize peter to be ResourceOwner for consumer group with "eagle_" prefix
 ```bash
-cd confluent-rbac-hands-on-master/rbac-docker/client-configs
+curl -i -u professor:professor -X POST "http://localhost:8090/security/1.0/principals/User%3Apeter/roles/ResourceOwner/bindings" \
+-H "accept: application/json" -H "Content-Type: application/json" \
+-d "{\"scope\":{\"clusters\":{\"kafka-cluster\":\"$KAFKA_ID\"}},\"resourcePatterns\":[{\"resourceType\":\"Group\",\"name\":\"eagle_\",\"patternType\":\"PREFIXED\"}]}"
 ```
-Create Schema for TEST1
-```bash
-curl -u professor:professor -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"type\":\"record\",\"name\":\"Payment\",\"namespace\":\"io.confluent.examples.clients.basicavro\",\"fields\":[{\"name\":\"id\",\"type\":\"string\"},{\"name\":\"amount\",\"type\":\"double\"}]}"}' http://localhost:8081/subjects/test1-value/versions
-```
-Get Schema from Schema Registry;
-```bash
-curl -u professor:professor localhost:8081/subjects
-```
-Check Schema also in C3 http://publicip:9021 or http://localhost:9021 as user professor. Go to topic test1 and then Schema. 
-Load data into test2 topic and create it first
-```bash
-# create topic
-kafka-topics --bootstrap-server localhost:9094 --create --topic test2 --partitions 1 --replication-factor 1 --command-config professor.properties
-# Now produce data into topic
-kafka-console-producer --broker-list localhost:9094 \
---producer.config professor.properties --topic test2 
-# Enter
-{"f1":"001"}
-{"f1": "002"}
-{"f1": "003"}
-{"f1": "004"}
-CTRL+c
-```
-Create SCHEMA for TEST2
-```bash
-curl -u professor:professor -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" --data '{"schema": "{\"type\":\"record\",\"name\":\"myrecord\",\"namespace\":\"io.confluent.examples.clients.basicavro\",\"fields\":[{\"name\":\"f1\",\"type\":\"string\"}]}"}' http://localhost:8081/subjects/test2-value/versions
-```
-Get all Schemas
-```bash
-curl -u professor:professor localhost:8081/subjects
-```
-Get data of Schema for test2
-```bash
-curl -u professor:professor localhost:8081/subjects/test2-value/versions/latest
-```
-You may also check in C3 if you want.
 
-Consume Data from TEST2 as professor
+2) Now as user peter lets authorize eagle_team with DeveloperRead to access topics with "eagle_" prefix and consumer group "eagle_" prefix
+```bash
+curl -i -u peter:peter -X POST "http://localhost:8090/security/1.0/principals/Group%3Aeagle_team/roles/DeveloperRead/bindings" \
+-H "accept: application/json" -H "Content-Type: application/json" \
+-d "{\"scope\":{\"clusters\":{\"kafka-cluster\":\"$KAFKA_ID\"}},\"resourcePatterns\":[{\"resourceType\":\"Topic\",\"name\":\"eagle_\",\"patternType\":\"PREFIXED\"}]}"
+```
+
+3) And finaly lets authorize eagle_team with DeveloperRead to access/join consumer group with "eagle_" prefix
+```bash
+curl -i -u peter:peter -X POST "http://localhost:8090/security/1.0/principals/Group%3Aeagle_team/roles/DeveloperRead/bindings" \
+-H "accept: application/json" -H "Content-Type: application/json" \
+-d "{\"scope\":{\"clusters\":{\"kafka-cluster\":\"$KAFKA_ID\"}},\"resourcePatterns\":[{\"resourceType\":\"Group\",\"name\":\"eagle_\",\"patternType\":\"PREFIXED\"}]}"
+```
+
+
+Lets now try to consume data from eagle_topic1 as suvad. It should work.
 ```bash
 kafka-console-consumer --bootstrap-server localhost:9094 \
---consumer.config professor.properties --topic test2 --from-beginning
+--consumer.config suvad.properties --topic eagle_topic1 --from-beginning --group eagle_cg1
 ```
-
-Use KSQL cli and play aroud, first with fry (not allowed):
-```bash
-ksql -u fry -p fry http://localhost:8088
-ksql> show topics;
-ksql> print 'test2' from beginning;
-ksql> exit
-```
-
-Now, login as professor (Superuser)
-```bash
-ksql -u professor -p professor http://localhost:8088
-ksql> show topics;
-ksql> show streams;
-ksql> CREATE STREAM TEST2STREAM (NAME STRING) WITH (VALUE_FORMAT='JSON', KAFKA_TOPIC='test2', PARTITIONS=1, REPLICAS=1);
-ksql> describe extended TEST2STREAM;
-ksql> SET 'auto.offset.reset'='earliest';
-ksql> select * from TEST2STREAM emit changes;
-```
-
-Open a second Terminal and produce data into topic JIMNEWTOPIC
-```bash
-kafka-console-producer --broker-list localhost:9094 --producer.config professor.properties --topic test2
-Hallo
-Warum
-Ist
-das
-so?
-# enter CTRL+c to stop producing
-```
-The producer data should be visible in Terminal 1 (KSQL cli open select).
-
-Now, enable user Bender for some specific work.
-First Grant User:bender ResourceOwner to prefix Topic:foo on Kafka cluster KAFKA_ID:
-```bash
-confluent login --url http://localhost:8090 # as professor
-confluent cluster describe --url http://localhost:8090
-export KAFKA_ID=4QSNFjpeSoyLMCsNOTJo7Q
-confluent iam rolebinding create --principal User:bender --kafka-cluster-id $KAFKA_ID --role ResourceOwner --resource Topic:foo --prefix
-```
-You can do this also with Control Center;
-![set Security for Bender](images/set_bender_sec.png)
-
-List created rolebinding:
-```bash
-confluent iam rolebinding list --principal User:bender --kafka-cluster-id $KAFKA_ID
-```
-
-Create topic and produce data as bender:
-```bash
-kafka-topics --bootstrap-server localhost:9094 --create --topic foo.topic1 --partitions 1 --replication-factor 1 --command-config bender.properties
-# List topic, should only list foo.topic1
-kafka-topics --bootstrap-server localhost:9094 --list  --command-config bender.properties
-# produce into topic
-seq 1000 | kafka-console-producer --broker-list localhost:9094 --producer.config bender.properties --topic foo.topic1
-```
-
-Try to consume of topic as bender (should fail):
-```bash
-kafka-console-consumer --bootstrap-server localhost:9094 \
---consumer.config bender.properties --topic foo.topic1 --from-beginning
-```
-
-There are some missing roles for bender, add them:
-```bash
-# READ Role
-confluent iam rolebinding create \
---principal User:bender \
---role DeveloperRead \
---resource Topic:foo.topic1 \
---prefix \
---kafka-cluster-id $KAFKA_ID
-# Still one role missing to access to consumer group, add: 
-confluent iam rolebinding create \
---principal User:bender \
---role DeveloperRead \
---resource Group:console-consumer- \
---prefix \
---kafka-cluster-id $KAFKA_ID
-```
-
-Consume again, now should work
-```bash
-kafka-console-consumer --bootstrap-server localhost:9094 \
---consumer.config bender.properties --topic foo.topic1 --from-beginning
-```
-
-List roles for bender
-```bash
-confluent iam rolebinding list --principal User:bender --kafka-cluster-id $KAFKA_ID
-```
-
-This was a short overview of configured RBAC environment.
 
 go back to [to Lab Overview](https://github.com/ora0600/confluent-rbac-hands-on#hands-on-agenda-and-labs)
