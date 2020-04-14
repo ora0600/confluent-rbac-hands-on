@@ -42,11 +42,11 @@ ldapadd -x -D "cn=admin,dc=planetexpress,dc=com" -w GoodNewsEveryone -H ldap:// 
 exit
 ```
 
-Try to login into Confluent MDS service, use professor/professor
+Try to login into Confluent MDS service, use usr/pwd = professor/professor
 ```bash
 confluent login --url http://localhost:8090
 ```
-Add Max to the Role System Admin for Kafka cluster
+Add Role SystemAdmin for Kafka cluster to the user "max"
 ```bash
 confluent iam rolebinding create \
     --principal User:max  \
