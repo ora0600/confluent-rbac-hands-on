@@ -33,7 +33,11 @@ For an environment in cloud you need to run following components on your machine
 For an environment on your hardware, you have to 
 - Docker installed
 - Java8 installed
-- Confluent Platform 5.4 installed
+- Confluent Platform 5.4 installed: set environment variables
+  ```bash  
+  export CONFLUENT_HOME=YOURPATH
+  export PATH=$CONFLUENT_HOME/bin:$PATH
+  ```
 - Confluent cli installed
 ```bash
 curl -L https://cnfl.io/cli | sh -s -- -b /usr/local/bin
