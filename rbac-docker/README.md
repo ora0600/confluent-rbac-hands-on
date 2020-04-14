@@ -20,6 +20,7 @@ We will use `PREFIX=confluentinc` and `TAG=5.4.1` for all images running via doc
 Start the demo environment on your local machine
 ```
 git clone https://github.com/ora0600/confluent-rbac-hands-on.git
+cd confluent-rbac-hands-on/rbac-docker
 ./confluent-start.sh
 ```
 Doing hands-on see [Start-Page](https://github.com/ora0600/confluent-rbac-hands-on#hands-on-agenda-and-labs)
