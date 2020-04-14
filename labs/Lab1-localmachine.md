@@ -37,7 +37,7 @@ If you are working from your machine with the cloud environment, from where you 
 Before setting Max to SystemAdmin please add missing users to LDAP:
 ```bash
 ### Add users and groups
-docker exec -it openldap bash
+docker exec -it openldap bash
 ldapadd -x -D "cn=admin,dc=planetexpress,dc=com" -w GoodNewsEveryone -H ldap:// -f /etc/add-user/add-user.ldif
 exit
 ```
