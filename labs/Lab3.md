@@ -1,4 +1,4 @@
-# Lab 3. First Authorization check
+# Lab 3. First Authorizations - Project Eagle
 We start now with a new use case.
 We have a project with a name "eagle" and there is a project team. In the project eagle team there are currently 3 members/users (peter, carsten, suvad).
 Project owner is peter; carsten and suvad are developers.
