@@ -19,13 +19,20 @@ see [Prerequisites](https://github.com/ora0600/confluent-rbac-hands-on)
 ## Getting Started
 To start confluent platform 5.4.1 including setup for RBC demo in AWS run
 ```bash
+cd terraform/aws
 # edit first env-vars.sample
 cp env-vars.sample env-vars
 # set your entries into env-vars file
-vi env-vars
+vi env-vars # set your own values
+   export TF_VAR_aws_access_key=XXXXXX
+   export TF_VAR_aws_secret_key=YYYYYY
+   export TF_VAR_aws_region=<ENTER YOUR region>
+   export TF_VAR_ssh_key_name=<Enter your sh key name>
+   export TF_VAR_instance_count=1
+# save 
 # source it
 source env-vars
-cd aws
+# execute terraform
 terraform init
 terraform plan
 terraform apply
