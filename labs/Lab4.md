@@ -65,7 +65,7 @@ confluent iam rolebinding create \
 --schema-registry-cluster-id schema-registry
 ```
 
-OK, now lets login to Control Center as user peter to see if he and his team hs access to Schema Registry.
+OK, now lets login to Control Center as user peter to see if he and his team has access to Schema Registry.
 
 Great, now lets do some SR actions:
   * lets create a schema as user peter for topic eagle_topic2
