@@ -105,4 +105,5 @@ docker-compose -p rbac down
 ```
 
 Thanks a lot for attending
-Confluent Team.
+
+Confluent Team
