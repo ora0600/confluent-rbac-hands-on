@@ -11,11 +11,11 @@ Now RBAC admin (professor) wants to delegate project authorization responsibilit
    ![manage assignements#1](images/pic1.png)
  * and choose "Manage role assignements"
    ![manage assignements#2](images/pic2.png)
- * Go to Assignements
+ * Go to Assignments
    ![manage assignements#3](images/pic3.png)
  * Choose your Kafka cluster, and click then on Topic
    ![manage assignements#4](images/pic4.png)
- * Click on "+ Add role assignement"
+ * Click on "+ Add role assignment"
 
    * Then select for 1. dropdown ("Principal Type") "User"
    * as User select "peter" from the list,
