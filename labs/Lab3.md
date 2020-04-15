@@ -32,11 +32,11 @@ Login to the Control Center as peter and
 
 Now logout and login as carsten or suvad in the control center and check if you are able to see any topics. Should be not possible.
 
-Now login again as peter and choose "Manage role assignements"
- * select assignements
- * klick on kafka cluster
+Now login again as peter and choose "Manage role assignments"
+ * select assignments
+ * Click on kafka cluster
  * go to the topic area
- * Click on "+ Add role assignement"
+ * Click on "+ Add role assignment"
    * choose principal type Group
    * choose group eagle_team
    * choose Role "DeveloperWrite"
@@ -80,7 +80,7 @@ curl -i -u peter:peter -X POST "http://localhost:8090/security/1.0/principals/Gr
 -d "{\"scope\":{\"clusters\":{\"kafka-cluster\":\"$KAFKA_ID\"}},\"resourcePatterns\":[{\"resourceType\":\"Topic\",\"name\":\"eagle_\",\"patternType\":\"PREFIXED\"}]}"
 ```
 
-3) And finaly lets authorize eagle_team with DeveloperRead to access/join consumer group with "eagle_" prefix
+3) And finally lets authorize eagle_team with DeveloperRead to access/join consumer group with "eagle_" prefix
 ```bash
 curl -i -u peter:peter -X POST "http://localhost:8090/security/1.0/principals/Group%3Aeagle_team/roles/DeveloperRead/bindings" \
 -H "accept: application/json" -H "Content-Type: application/json" \
