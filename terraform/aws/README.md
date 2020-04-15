@@ -17,8 +17,14 @@ This docker-compose based setup includes:
 see [Prerequisites](https://github.com/ora0600/confluent-rbac-hands-on)
 
 ## Getting Started
-To start confluent platform 5.3.1 including setup for RBC demo in AWS run
-```
+To start confluent platform 5.4.1 including setup for RBC demo in AWS run
+```bash
+# edit first env-vars.sample
+cp env-vars.sample env-vars
+# set your entries into env-vars file
+vi env-vars
+# source it
+source env-vars
 cd aws
 terraform init
 terraform plan
@@ -26,7 +32,7 @@ terraform apply
 ```
 Terraform will deploy the complete environment and start all service via docker-compose.
 The output of terraform will show you all the endpoints:
-```
+```bash
 terraform output
 C3 =  Control Center: http://pubip:9021
 CONNECT =  Connect: curl http://pubip:8083

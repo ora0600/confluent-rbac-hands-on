@@ -1,19 +1,15 @@
 # AWS Config
 
 variable "aws_access_key" {
-  default = ""
 }
 
 variable "aws_secret_key" {
-  default = ""
 }
 
 variable "aws_region" {
-  default = "eu-central-1"
 }
 
 variable "ssh_key_name" {
-  default = "hackathon-temp-key"
 }
 
 variable "instance_type_resource" {
