@@ -46,13 +46,7 @@ Try to login into Confluent MDS service, use usr/pwd = professor/professor
 ```bash
 confluent login --url http://localhost:8090
 ```
-Add Role SystemAdmin for Kafka cluster to the user "max"
-```bash
-confluent iam rolebinding create \
-    --principal User:max  \
-    --role SystemAdmin \
-    --kafka-cluster-id $KAFKA_ID
-```
+
 Check LDAP Users in openLDAP:
 ```bash
 ldapsearch -D "cn=Hubert J. Farnsworth,ou=people,dc=planetexpress,dc=com" -w professor -p 389 -h localhost -b "dc=planetexpress,dc=com" -s sub "(objectclass=*)"
