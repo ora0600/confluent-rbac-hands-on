@@ -78,7 +78,7 @@ curl -i -u professor:professor -X POST "http://localhost:8090/security/1.0/princ
 ```
 You can doublecheck this setting in Control Center: Login as Peter -> go my Role Assignment -> Choose Kafka Cluster -> click on Group tab
 
-2) Now as user peter lets authorize eagle_team with DeveloperRead to access topics with "eagle_" prefix and consumer group "eagle_" prefix
+2) Now as user peter lets authorize eagle_team with DeveloperRead to access topics with "eagle_" prefix:
 ```bash
 # Check KAFKA_ID is set
 echo $KAFKA_ID
