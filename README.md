@@ -96,7 +96,7 @@ docker-compose -p rbac down
 ```
 A restart inside the compute:
 ```bash
-./confluent_start.sh
+./confluent-start.sh
 ```
 On your local machine just execute
 ```bash
