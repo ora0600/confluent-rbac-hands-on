@@ -34,7 +34,7 @@ Kafka broker is available at `localhost:9094` (note, not 9092). All other servic
 If you are working from your machine with the cloud environment, from where you deployed the cloud compute then please use the Public IP instead of localhost.
 ```bash
 ### Add users and groups
-docker exec -it openldap bash
+docker exec -it openldap bash
 ldapadd -x -D "cn=admin,dc=planetexpress,dc=com" -w GoodNewsEveryone -H ldap:// -f /etc/add-user/add-user.ldif
 exit
 ```
