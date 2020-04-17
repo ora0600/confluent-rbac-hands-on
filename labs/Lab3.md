@@ -95,8 +95,8 @@ curl -i -u peter:peter -X POST "http://localhost:8090/security/1.0/principals/Gr
 -H "accept: application/json" -H "Content-Type: application/json" \
 -d "{\"scope\":{\"clusters\":{\"kafka-cluster\":\"$KAFKA_ID\"}},\"resourcePatterns\":[{\"resourceType\":\"Group\",\"name\":\"eagle_\",\"patternType\":\"PREFIXED\"}]}"
 ```
-If you now login as suvad you should see all the assignment under my role assignments for suvad derived from Group eagle_team assignment:
-For the Group:
+If you now login as suvad you should see all the assignments under my role assignments for suvad derived from LDAP Group eagle_team assignment:
+For the Consumer Group:
 ![Suvad group assignements](images/suvad_group_assignment.png)
 For the Topic:
 ![Suvad topic assignements](images/suvad_topic_assignment.png)
